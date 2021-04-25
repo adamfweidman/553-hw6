@@ -52,17 +52,18 @@ def client_write(client):
 # TODO: Thread that receives commands from the client.  All recv() calls should
 # be contained in this function.
 def client_read(client):
-    command, song = client.s.recv(2048)
+    # command, song = client.s.recv(2048)
+    command= client.s.recv(2048)
     if(command == "list"):
         client.setCommand("list")
         client_write(client)
-    elif(command == "play"):
-        client.setCommand("play")
-        client.setSong(song)
-        client_write(client)
-    elif(command == "stop"): 
-        client.setCommand("stop")
-        client_write(client)
+    # elif(command == "play"):
+    #     client.setCommand("play")
+    #     client.setSong(song)
+    #     client_write(client)
+    # elif(command == "stop"): 
+    #     client.setCommand("stop")
+    #     client_write(client)
     else:
         print("Bye!")
         exit(0)
