@@ -41,7 +41,7 @@ def client_write(client):
     song = client.getCurrentSong()
     
     if(command == "list"):
-        data= pickle.dumps(songNameToData.keys())
+        data= pickle.dumps(list(songNameToData.keys()))
         client.s.sendall(data)
     elif(command == "play"):
         relData = songNameToData[song]
