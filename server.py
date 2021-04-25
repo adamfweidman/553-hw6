@@ -49,8 +49,8 @@ def client_write(client):
         client.s.sendall(data)
     elif command == "play":
         pos_end_range = min(len(songNameToData[song])-1, client.songLoc+SEND_BUFFER)
-        song_data = pickle.dumps(client.songNum, (songNameToData[song][client.songLoc:pos_end_range]))
-        client.s.sendall(song_data)
+        song_data = songNameToData[song][client.songLoc:pos_end_range]
+        client.s.sendall(pickle.dumps(client.songNum, song_data))
         client.songPos = pos_end_range
     
     elif command == "quit":
