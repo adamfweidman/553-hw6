@@ -70,7 +70,7 @@ def client_read(client):
             client_write(client)
         elif command in ['p', 'play']:
             client.setCommand("play")
-            client.setSong(song)
+            client.setSong(songNameToData.keys()[song])
             client_write(client)
         elif command in ['s', 'stop']: 
             client.setCommand("stop")
@@ -94,7 +94,7 @@ def get_mp3s(musicdir):
             songFile =  open(curDir, 'rb')
             filedata = songFile.read()
             songName = filename.split(".mp3")[0]
-            songNameToData[len(songs)] = filedata
+            songNameToData[songName] = filedata
             songs.append(songName)
         # TODO: Store song metadata for future use.  You may also want to build
         # the song list once and send to any clients that need it.
