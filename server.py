@@ -57,6 +57,7 @@ def client_read(client):
     # command, song = client.s.recv(2048)
     command= pickle.loads(client.s.recv(2048))
     if command in ["list", "l"]:
+        print("List Command recieved")
         client.setCommand("list")
         client_write(client)
     # elif(command == "play"):
