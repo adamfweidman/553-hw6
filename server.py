@@ -54,7 +54,7 @@ def client_write(client):
 def client_read(client):
     # command, song = client.s.recv(2048)
     command= client.s.recv(2048)
-    if(command == "list"):
+    if command in ["list", "l"]:
         client.setCommand("list")
         client_write(client)
     # elif(command == "play"):
