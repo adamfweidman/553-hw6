@@ -104,6 +104,7 @@ def main():
     HOST = '172.31.32.221'
 
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         s.bind((HOST, port))
         s.listen()
         conn, addr = s.accept()
@@ -119,8 +120,8 @@ def main():
             threads.append(t)
             t.start()
             while True:
-                pass 
-    s.close()
+                next 
+        s.close()
 
 
 if __name__ == "__main__":
