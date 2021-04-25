@@ -67,7 +67,7 @@ def main():
 
     HOST = '172.31.32.221'
 
-    with socket.socket(socket.AF_INET, socket.socket.SOCK_STREAM) as s:
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.bind((HOST, port))
         s.listen()
         conn, addr = s.accept()
