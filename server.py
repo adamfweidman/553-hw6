@@ -42,7 +42,7 @@ def client_write(client):
     
     if(command == "list"):
         song_list_str = "[" + ",".join(songNameToData.keys()) + "]"
-        data= pickle.dumps(song_list_str)
+        data= pickle.dumps(song_list_str, protocol=3)
         print(data)
         client.s.sendall(data)
     elif(command == "play"):
