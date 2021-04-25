@@ -41,10 +41,10 @@ def client_write(client):
     
     if(command == "list"):
         data=struct.pack(songNameToData.keys())
-        client.s.send(data)
+        client.s.sendall(data)
     elif(command == "play"):
         relData = songNameToData[song]
-        client.s.send(relData)
+        client.s.sendall(relData)
 
     # data = songNameToData[song]
     # client.s.send(data)
@@ -108,7 +108,7 @@ def main():
             print("Connection from ", addr)
             # TODO: create a socket and accept incoming connections
             while True:
-                client = Client()
+                client = Client(conn)
                 t = Thread(target=client_read, args=(client))
                 threads.append(t)
                 t.start()
