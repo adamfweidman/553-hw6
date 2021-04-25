@@ -49,8 +49,6 @@ def get_mp3s(musicdir):
         # TODO: Store song metadata for future use.  You may also want to build
         # the song list once and send to any clients that need it.
 
-        songs.append(None)
-
     print("Found {0} song(s)!".format(len(songs)))
     return songs 
 
