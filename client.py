@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 import pickle
-from typing import Protocol
 import ao
 import mad
 import readline
@@ -117,7 +116,7 @@ def main():
         sock.sendall(pickle.dumps(cmd))
         data = sock.recv(2048) # test value 
         print(data)
-        print(pickle.loads(data, protocol=3))
+        print(pickle.loads(data))
 
 if __name__ == '__main__':
     main()
