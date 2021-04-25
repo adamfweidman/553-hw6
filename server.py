@@ -55,7 +55,7 @@ def client_write(client):
 # be contained in this function.
 def client_read(client):
     # command, song = client.s.recv(2048)
-    command= pickle.load(client.s.recv(2048))
+    command= pickle.loads(client.s.recv(2048))
     if command in ["list", "l"]:
         client.setCommand("list")
         client_write(client)
