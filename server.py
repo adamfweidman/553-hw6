@@ -39,23 +39,22 @@ class Client:
 # use locks or similar synchronization tools to ensure that the two threads play
 # nice with one another!
 def client_write(client):
-    while not client.quit: 
-        command = client.getCommand()
-        song = client.getCurrentSong()
-        
-        if command == "list":
-            # song_list_str = "[" + ",".join(songNameToData.keys()) + "]"
-            data= pickle.dumps(("l", list(songNameToData.keys())), protocol=2)
-            client.s.sendall(data)
-        elif command == "play":
-            pos_end_range = min(len(songNameToData[song])-1, client.songLoc+SEND_BUFFER)
-            song_data = songNameToData[song][client.songLoc:pos_end_range]
-            client.s.sendall(song_data)
-            client.songPos = pos_end_range
-        
-        elif command == "quit":
-            client.s.close()
-            return
+    command = client.getCommand()
+    song = client.getCurrentSong()
+    
+    if command == "list":
+        # song_list_str = "[" + ",".join(songNameToData.keys()) + "]"
+        data= pickle.dumps(("l", list(songNameToData.keys())), protocol=2)
+        client.s.sendall(data)
+    elif command == "play":
+        pos_end_range = min(len(songNameToData[song])-1, client.songLoc+SEND_BUFFER)
+        song_data = songNameToData[song][client.songLoc:pos_end_range]
+        client.s.sendall(song_data)
+        client.songPos = pos_end_range
+    
+    elif command == "quit":
+        client.s.close()
+        return
 
     # data = songNameToData[song]
     # client.s.send(data)

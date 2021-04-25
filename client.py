@@ -37,11 +37,15 @@ class mywrapper(object):
 def recv_thread_func(wrap, cond_filled, sock):
     while True:
         # TODO
-        data = sock.recv(2048) # test value 
-        command, data = pickle.loads(data)
+        recv_data = sock.recv(2048) # test value 
+        if not recv_data:
+            next
+        command, data = pickle.loads(recv_data)
         if command == "l": 
+            print("\n")
             for song in range(len(data)):
                 print "%d) %s" % (song, data[song]) 
+        sleep(3)
 
 
 # If there is song data stored in the wrapper object, play it!
