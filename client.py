@@ -46,6 +46,8 @@ def recv_thread_func(wrap, cond_filled, sock):
             print("\n")
             for song in range(len(data)):
                 print "%d) %s" % (song, data[song]) 
+        else: 
+            data
         sleep(3)
 
 
