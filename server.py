@@ -107,14 +107,16 @@ def main():
         with conn: 
             print("Connection from ", addr)
             # TODO: create a socket and accept incoming connections
+            # while True:
+            client = Client(conn)
+            t = Thread(target=client_read, args=(client))
+            threads.append(t)
+            t.start()
+            t = Thread(target=client_write, args=(client))
+            threads.append(t)
+            t.start()
             while True:
-                client = Client(conn)
-                t = Thread(target=client_read, args=(client))
-                threads.append(t)
-                t.start()
-                t = Thread(target=client_write, args=(client))
-                threads.append(t)
-                t.start()
+                pass 
 
 
 if __name__ == "__main__":
