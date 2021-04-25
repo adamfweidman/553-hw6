@@ -40,6 +40,7 @@ def recv_thread_func(wrap, cond_filled, sock):
         recv_data = sock.recv(2048) # test value 
         if not recv_data:
             next
+        print recv_data
         command, data = pickle.loads(recv_data)
         if command == "l": 
             print("\n")
@@ -118,7 +119,7 @@ def main():
 
         if cmd in ['p', 'play']:
             print 'The user asked to play:', args
-            sock.sendall(pickle.dumps((cmd,args)))
+            sock.sendall(pickle.dumps((cmd, args)))
 
         if cmd in ['s', 'stop']:
             print 'The user asked for stop.'
