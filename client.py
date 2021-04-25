@@ -37,7 +37,11 @@ class mywrapper(object):
 def recv_thread_func(wrap, cond_filled, sock):
     while True:
         # TODO
-        pass
+        data = sock.recv(2048) # test value 
+        command, data = pickle.loads(data)
+        if command == "l": 
+            for song in len(data):
+                print "%d) %s" % (song, data[song]) 
 
 
 # If there is song data stored in the wrapper object, play it!
@@ -52,6 +56,8 @@ def play_thread_func(wrap, cond_filled, dev):
         buf = wrap.mf.read()
         dev.play(buffer(buf), len(buf))
         """
+        buf = wrap.mf.read()
+        dev.play(buffer(buf), len(buf))
 
 
 def main():
@@ -113,10 +119,8 @@ def main():
         if cmd in ['quit', 'q', 'exit']:
             sys.exit(0)
 
-        sock.sendall(pickle.dumps(cmd))
-        data = sock.recv(2048) # test value 
-        print(data)
-        print(pickle.loads(data))
+        sock.sendall(pickle.dumps((cmd,args)))
+
 
 if __name__ == '__main__':
     main()

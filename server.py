@@ -21,6 +21,8 @@ class Client:
         self.songRequest = ""
         self.currentCommand = ""
         self.s = sock 
+        self.songLoc = 0
+        self.quit = False 
 
     def setSong(self, songName):
         self.songRequest = songName
@@ -37,17 +39,23 @@ class Client:
 # use locks or similar synchronization tools to ensure that the two threads play
 # nice with one another!
 def client_write(client):
-    command = client.getCommand()
-    song = client.getCurrentSong()
-    
-    if(command == "list"):
-        song_list_str = "[" + ",".join(songNameToData.keys()) + "]"
-        data= pickle.dumps(song_list_str, protocol=2)
-        print(data)
-        client.s.sendall(data)
-    elif(command == "play"):
-        relData = songNameToData[song]
-        client.s.sendall(relData)
+    while not client.quit: 
+        command = client.getCommand()
+        song = client.getCurrentSong()
+        
+        if command == "list":
+            song_list_str = "[" + ",".join(songNameToData.keys()) + "]"
+            data= pickle.dumps(("l", song_list_str), protocol=2)
+            client.s.sendall(data)
+        elif command == "play":
+            pos_end_range = min(len(songNameToData[song])-1, client.songLoc+SEND_BUFFER)
+            song_data = songNameToData[song][client.songLoc:pos_end_range]
+            client.s.sendall(song_data)
+            client.songPos = pos_end_range
+        
+        elif command == "quit":
+            client.s.close()
+            return
 
     # data = songNameToData[song]
     # client.s.send(data)
@@ -55,22 +63,25 @@ def client_write(client):
 # TODO: Thread that receives commands from the client.  All recv() calls should
 # be contained in this function.
 def client_read(client):
-    # command, song = client.s.recv(2048)
-    command= pickle.loads(client.s.recv(2048))
-    if command in ["list", "l"]:
-        print("List Command recieved")
-        client.setCommand("list")
-        client_write(client)
-    # elif(command == "play"):
-    #     client.setCommand("play")
-    #     client.setSong(song)
-    #     client_write(client)
-    # elif(command == "stop"): 
-    #     client.setCommand("stop")
-    #     client_write(client)
-    # else:
-    #     print("Bye!")
-    #     exit(0)
+    while True: 
+        command, song = pickle.loads(client.s.recv(2048))
+        if command in ["list", "l"]:
+            print("List Command recieved")
+            client.setCommand("list")
+            client_write(client)
+        elif command in ['p', 'play']:
+            client.setCommand("play")
+            client.setSong(song)
+            client_write(client)
+        elif command in ['s', 'stop']: 
+            client.setCommand("stop")
+            client_write(client)
+        elif command in ['quit', 'q', 'exit']:
+            client.quit = True 
+            client_write(client)
+            return 
+        
+
 
 def get_mp3s(musicdir):
     print("Reading music files...")
