@@ -118,6 +118,7 @@ def main():
             t.start()
             while True:
                 pass 
+    s.close()
 
 
 if __name__ == "__main__":
