@@ -86,7 +86,7 @@ def get_mp3s(musicdir):
     print("Reading music files...")
     songs = []
 
-    for filename in enumerate(os.listdir(musicdir)):
+    for filename in os.listdir(musicdir):
         if not filename.endswith(".mp3"):
             continue
         else: 
