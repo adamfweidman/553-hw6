@@ -115,7 +115,7 @@ def main():
 
         sock.sendall(pickle.dumps(cmd))
         data = sock.recv(2048) # test value 
-        print(pickle.loads(data))
+        print(data)
         
 
 if __name__ == '__main__':
