@@ -40,7 +40,7 @@ def recv_thread_func(wrap, cond_filled, sock):
         data = sock.recv(2048) # test value 
         command, data = pickle.loads(data)
         if command == "l": 
-            for song in len(data):
+            for song in range(len(data)):
                 print "%d) %s" % (song, data[song]) 
 
 
@@ -50,14 +50,15 @@ def recv_thread_func(wrap, cond_filled, sock):
 # using it too!
 def play_thread_func(wrap, cond_filled, dev):
     while True:
+        pass
         """
         TODO
         example usage of dev and wrap (see mp3-example.py for a full example):
         buf = wrap.mf.read()
         dev.play(buffer(buf), len(buf))
         """
-        buf = wrap.mf.read()
-        dev.play(buffer(buf), len(buf))
+        # buf = wrap.mf.read()
+        # dev.play(buffer(buf), len(buf))
 
 
 def main():
@@ -109,18 +110,20 @@ def main():
         # TODO: Send messages to the server when the user types things.
         if cmd in ['l', 'list']:
             print 'The user asked for list.'
+            sock.sendall(pickle.dumps((cmd, None)))
 
         if cmd in ['p', 'play']:
             print 'The user asked to play:', args
+            sock.sendall(pickle.dumps((cmd,args)))
 
         if cmd in ['s', 'stop']:
             print 'The user asked for stop.'
+            sock.sendall(pickle.dumps((cmd, None)))
 
         if cmd in ['quit', 'q', 'exit']:
+            sock.sendall(pickle.dumps((cmd, None)))
             sys.exit(0)
-
-        sock.sendall(pickle.dumps((cmd,args)))
-
+            
 
 if __name__ == '__main__':
     main()
