@@ -54,16 +54,30 @@ def main():
     songs, songlist = get_mp3s(sys.argv[2])
     threads = []
 
+    HOST = '172.31.32.221'
+
+    with socket.socket(socket.AF_INET, socket.socket.SOCK_STREAM) as s:
+        s.bind((HOST, port))
+        s.listen()
+        conn, addr = s.accept()
+        with conn: 
+            print("Connection from ", addr)
+            while True:
+                data = conn.recv(SEND_BUFFER)
+                if not data:
+                    break
+                conn.sendall(data)
+
     # TODO: create a socket and accept incoming connections
-    while True:
-        client = Client()
-        t = Thread(target=client_read, args=(client))
-        threads.append(t)
-        t.start()
-        t = Thread(target=client_write, args=(client))
-        threads.append(t)
-        t.start()
-    s.close()
+    # while True:
+    #     client = Client()
+    #     t = Thread(target=client_read, args=(client))
+    #     threads.append(t)
+    #     t.start()
+    #     t = Thread(target=client_write, args=(client))
+    #     threads.append(t)
+    #     t.start()
+    # s.close()
 
 
 if __name__ == "__main__":
