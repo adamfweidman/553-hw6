@@ -70,7 +70,7 @@ def client_read(client):
             client_write(client)
         elif command in ['p', 'play']:
             client.setCommand("play")
-            client.setSong(list(songNameToData.keys())[song])
+            client.setSong(list(songNameToData.keys())[int(song)])
             client_write(client)
         elif command in ['s', 'stop']: 
             client.setCommand("stop")
