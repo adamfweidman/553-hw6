@@ -10,6 +10,9 @@ from threading import Lock, Thread
 QUEUE_LENGTH = 10
 SEND_BUFFER = 4096
 
+songNameToData = {}
+
+
 # per-client struct
 class Client:
     def __init__(self):
@@ -22,12 +25,12 @@ class Client:
 # use locks or similar synchronization tools to ensure that the two threads play
 # nice with one another!
 def client_write(client):
-
+    pass
 
 # TODO: Thread that receives commands from the client.  All recv() calls should
 # be contained in this function.
 def client_read(client):
-
+    pass
 
 def get_mp3s(musicdir):
     print("Reading music files...")
@@ -36,13 +39,20 @@ def get_mp3s(musicdir):
     for filename in os.listdir(musicdir):
         if not filename.endswith(".mp3"):
             continue
-
+        else: 
+            curDir = os.getcwd() + "/" + musicdir + "/" + filename
+            songFile =  open(curDir, 'rb')
+            filedata = songFile.read()
+            songName = filename.split(".mp3")[0]
+            songNameToData[songName] = filedata
+            songs.append(songName)
         # TODO: Store song metadata for future use.  You may also want to build
         # the song list once and send to any clients that need it.
 
         songs.append(None)
 
     print("Found {0} song(s)!".format(len(songs)))
+    return songs 
 
 def main():
     if len(sys.argv) != 3:
@@ -51,7 +61,8 @@ def main():
         sys.exit("Directory '{0}' does not exist".format(sys.argv[2]))
 
     port = int(sys.argv[1])
-    songs, songlist = get_mp3s(sys.argv[2])
+    #songs, songlist = get_mp3s(sys.argv[2])
+    songs = get_mp3s(sys.argv[2])
     threads = []
 
     HOST = '172.31.32.221'
