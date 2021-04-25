@@ -86,7 +86,7 @@ def get_mp3s(musicdir):
     print("Reading music files...")
     songs = []
 
-    for filename in os.listdir(musicdir):
+    for filename in enumerate(os.listdir(musicdir)):
         if not filename.endswith(".mp3"):
             continue
         else: 
@@ -94,7 +94,7 @@ def get_mp3s(musicdir):
             songFile =  open(curDir, 'rb')
             filedata = songFile.read()
             songName = filename.split(".mp3")[0]
-            songNameToData[songName] = filedata
+            songNameToData[len(songs)] = filedata
             songs.append(songName)
         # TODO: Store song metadata for future use.  You may also want to build
         # the song list once and send to any clients that need it.
