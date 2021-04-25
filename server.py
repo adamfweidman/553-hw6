@@ -111,7 +111,7 @@ def main():
             print("Connection from ", addr)
             # TODO: create a socket and accept incoming connections
             # while True:
-            client = Client(conn)
+            client = Client(s)
             t = Thread(target=client_read, args=[(client)])
             threads.append(t)
             t.start()
