@@ -41,13 +41,14 @@ def recv_thread_func(wrap, cond_filled, sock):
         if not recv_data:
             next
         print recv_data
-        command, data = pickle.loads(recv_data)
-        if command == "l": 
+        command = pickle.loads(recv_data)
+        if command[0] == "l": 
+            _, data = pickle.loads(recv_data)
             print("\n")
             for song in range(len(data)):
                 print "%d) %s" % (song, data[song]) 
         else: 
-            data
+            print recv_data
         sleep(3)
 
 
