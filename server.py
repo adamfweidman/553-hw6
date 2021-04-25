@@ -5,6 +5,7 @@ import socket
 import struct
 import sys
 from threading import Lock, Thread
+import pickle 
 
 
 QUEUE_LENGTH = 10
@@ -40,7 +41,7 @@ def client_write(client):
     song = client.getCurrentSong()
     
     if(command == "list"):
-        data=struct.pack(songNameToData.keys())
+        data= pickle.dumps(songNameToData.keys())
         client.s.sendall(data)
     elif(command == "play"):
         relData = songNameToData[song]
@@ -53,7 +54,7 @@ def client_write(client):
 # be contained in this function.
 def client_read(client):
     # command, song = client.s.recv(2048)
-    command= client.s.recv(2048)
+    command= pickle.loads(client.s.recv(2048))
     if command in ["list", "l"]:
         client.setCommand("list")
         client_write(client)
@@ -64,9 +65,9 @@ def client_read(client):
     # elif(command == "stop"): 
     #     client.setCommand("stop")
     #     client_write(client)
-    else:
-        print("Bye!")
-        exit(0)
+    # else:
+    #     print("Bye!")
+    #     exit(0)
 
 def get_mp3s(musicdir):
     print("Reading music files...")

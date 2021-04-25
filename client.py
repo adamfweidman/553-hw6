@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import pickle
 import ao
 import mad
 import readline
@@ -112,8 +113,9 @@ def main():
         if cmd in ['quit', 'q', 'exit']:
             sys.exit(0)
 
-        sock.sendall(str.encode(cmd))
+        sock.sendall(pickle.dumps(cmd))
         data = sock.recv(2048) # test value 
+        print(data)
         
 
 if __name__ == '__main__':
