@@ -109,10 +109,10 @@ def main():
             # TODO: create a socket and accept incoming connections
             # while True:
             client = Client(conn)
-            t = Thread(target=client_read, args=(client))
+            t = Thread(target=client_read, args=[(client)])
             threads.append(t)
             t.start()
-            t = Thread(target=client_write, args=(client))
+            t = Thread(target=client_write, args=[(client)])
             threads.append(t)
             t.start()
             while True:
