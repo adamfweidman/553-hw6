@@ -15,9 +15,20 @@ songNameToData = {}
 
 # per-client struct
 class Client:
-    def __init__(self):
+    def __init__(self, sock):
         self.lock = Lock()
+        self.songRequest = ""
+        self.currentCommand = ""
+        self.s = sock 
 
+    def setSong(self, songName):
+        self.songRequest = songName
+    def getCurrentSong(self):
+        return self.songRequest
+    def setCommand(self, command):
+        self.currentCommand = command
+    def getCommand(self):
+        return self.currentCommand
 
 # TODO: Thread that sends music and lists to the client.  All send() calls
 # should be contained in this function.  Control signals from client_read could
@@ -25,12 +36,36 @@ class Client:
 # use locks or similar synchronization tools to ensure that the two threads play
 # nice with one another!
 def client_write(client):
-    pass
+    command = client.getCommand()
+    song = client.getCurrentSong()
+    
+    if(command == "list"):
+        data=struct.pack(songNameToData.keys())
+        client.s.send(data)
+    elif(command == "play"):
+        relData = songNameToData[song]
+        client.s.send(relData)
+
+    # data = songNameToData[song]
+    # client.s.send(data)
 
 # TODO: Thread that receives commands from the client.  All recv() calls should
 # be contained in this function.
 def client_read(client):
-    pass
+    command, song = client.s.recv(2048)
+    if(command == "list"):
+        client.setCommand("list")
+        client_write(client)
+    elif(command == "play"):
+        client.setCommand("play")
+        client.setSong(song)
+        client_write(client)
+    elif(command == "stop"): 
+        client.setCommand("stop")
+        client_write(client)
+    else:
+        print("Bye!")
+        exit(0)
 
 def get_mp3s(musicdir):
     print("Reading music files...")
@@ -71,22 +106,15 @@ def main():
         conn, addr = s.accept()
         with conn: 
             print("Connection from ", addr)
+            # TODO: create a socket and accept incoming connections
             while True:
-                data = conn.recv(SEND_BUFFER)
-                if not data:
-                    break
-                conn.sendall(data)
-
-    # TODO: create a socket and accept incoming connections
-    # while True:
-    #     client = Client()
-    #     t = Thread(target=client_read, args=(client))
-    #     threads.append(t)
-    #     t.start()
-    #     t = Thread(target=client_write, args=(client))
-    #     threads.append(t)
-    #     t.start()
-    # s.close()
+                client = Client()
+                t = Thread(target=client_read, args=(client))
+                threads.append(t)
+                t.start()
+                t = Thread(target=client_write, args=(client))
+                threads.append(t)
+                t.start()
 
 
 if __name__ == "__main__":

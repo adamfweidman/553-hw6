@@ -112,5 +112,9 @@ def main():
         if cmd in ['quit', 'q', 'exit']:
             sys.exit(0)
 
+        sock.sendall(str.encode(cmd))
+        data = sock.recv(2048) # test value 
+        
+
 if __name__ == '__main__':
     main()
