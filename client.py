@@ -37,7 +37,7 @@ class mywrapper(object):
 def recv_thread_func(wrap, cond_filled, sock):
     while True:
         # TODO
-        recv_data = sock.recv(4049) # test value 
+        recv_data = sock.recv(1025) # test value 
         command = struct.unpack("1s", recv_data[0])
         # print(command)
         if command[0] == "l": 
@@ -48,7 +48,7 @@ def recv_thread_func(wrap, cond_filled, sock):
 
         if command[0] == "p":
             data = recv_data[1:]
-            print(data)
+            # print(data)
             cond_filled.acquire()
             wrap.data += data
             cond_filled.release()
