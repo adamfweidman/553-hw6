@@ -55,7 +55,7 @@ def recv_thread_func(wrap, cond_filled, sock):
             file.write(data)
         else: 
             continue
-        sleep(0.1)
+        sleep(5)
         
 
 
