@@ -37,8 +37,9 @@ class mywrapper(object):
 def recv_thread_func(wrap, cond_filled, sock):
     while True:
         # TODO
-        recv_data = sock.recv(2048) # test value 
+        recv_data = sock.recv(10000) # test value 
         command = struct.unpack("1s", recv_data[0])
+        print(command)
         if command[0] == "l": 
             data = pickle.loads(recv_data[1:])
             print("\n")

@@ -9,7 +9,7 @@ import pickle
 
 
 QUEUE_LENGTH = 10
-SEND_BUFFER = 4096
+SEND_BUFFER = 1024
 
 songNameToData = {}
 
