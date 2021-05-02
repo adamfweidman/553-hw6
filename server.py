@@ -9,7 +9,7 @@ import pickle
 
 
 QUEUE_LENGTH = 10
-SEND_BUFFER = 1024
+SEND_BUFFER = 4048
 
 songNameToData = {}
 
@@ -52,7 +52,7 @@ def client_write(client):
         hdr = struct.pack('1s',b'p')
         pos_end_range = min(len(songNameToData[song])-1, client.songLoc+SEND_BUFFER)
         song_data = songNameToData[song][client.songLoc:pos_end_range]
-        client.s.sendall(hdr+song_data)
+        client.s.send(hdr+song_data)
         client.songLoc = client.songLoc+SEND_BUFFER
     
     elif command == "quit":
@@ -134,8 +134,8 @@ def main():
             t = Thread(target=client_read, args=[(client)])
             threads.append(t)
             t.start()
-            t = Thread(target=client_write, args=[(client)])
-            threads.append(t)
+            # t = Thread(target=client_write, args=[(client)])
+            # threads.append(t)
             t.start()
             while True:
                 next 
