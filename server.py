@@ -85,6 +85,7 @@ def client_read(client, threads):
             client.setCommand("stop")
         elif command in ['quit', 'q', 'exit']:
             client.quit = True 
+            client.s.close() 
             client_write(client)
             return 
         
@@ -128,8 +129,9 @@ def main():
         s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         s.bind((HOST, port))
         s.listen()
-        conn, addr = s.accept()
-        with conn: 
+        while True:
+            conn, addr = s.accept()
+            # with conn: 
             print("Connection from ", addr)
             # TODO: create a socket and accept incoming connections
             # while True:
@@ -137,11 +139,7 @@ def main():
             t = Thread(target=client_read, args=[client, threads])
             threads.append(t)
             t.start()
-            # t = Thread(target=client_write, args=[(client)])
-            # threads.append(t)
-            # t.start()
-            while True:
-                next 
+
         s.close()
 
 
