@@ -44,7 +44,7 @@ def client_write(client):
     song = client.getCurrentSong()
     
     if command == "list":
-        data = struct.pack('c', "l")
+        data = struct.pack('h', "l")
         data =+ pickle.dumps((list(songNameToData.keys())), protocol=2)
         client.s.sendall(data)
         print(data)
