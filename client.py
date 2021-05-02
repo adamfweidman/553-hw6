@@ -38,7 +38,7 @@ def recv_thread_func(wrap, cond_filled, sock):
     file = open("log.mp3", "wb")
     while True:
         # TODO
-        recv_data = sock.recv(2049) # test value 
+        recv_data = sock.recv(2048) # test value 
         command = struct.unpack("1s", recv_data[0])
         print(command)
         if command[0] == "l": 
@@ -55,7 +55,7 @@ def recv_thread_func(wrap, cond_filled, sock):
             file.write(data)
         else: 
             continue
-        sleep(3)
+        # sleep(0.5)
         
 
 
