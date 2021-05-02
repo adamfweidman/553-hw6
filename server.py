@@ -119,26 +119,29 @@ def main():
     songs = get_mp3s(sys.argv[2])
     threads = []
 
-    HOST = '172.31.32.221'
+    HOST = 'localhost'
 
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         s.bind((HOST, port))
         s.listen()
-        conn, addr = s.accept()
-        with conn: 
-            print("Connection from ", addr)
-            # TODO: create a socket and accept incoming connections
-            # while True:
-            client = Client(conn)
-            t = Thread(target=client_read, args=[(client)])
-            threads.append(t)
-            t.start()
-            # t = Thread(target=client_write, args=[(client)])
-            # threads.append(t)
-            # t.start()
-            while True:
-                next 
+        
+        while True:
+            conn, addr = s.accept()
+            with conn: 
+                print("Connection from ", addr)
+                # TODO: create a socket and accept incoming connections
+                # while True:
+                client = Client(conn)
+                t = Thread(target=client_read, args=[(client)])
+                threads.append(t)
+                t.start()
+                print("added new thread")
+                # t = Thread(target=client_write, args=[(client)])
+                # threads.append(t)
+                # t.start()
+                # while True:
+                #     next 
         s.close()
 
 

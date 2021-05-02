@@ -38,6 +38,9 @@ def recv_thread_func(wrap, cond_filled, sock):
     while True:
         # TODO
         recv_data = sock.recv(1025) # test value 
+        if recv_data == None:
+            continue
+        print(recv_data)
         command = struct.unpack("1s", recv_data[0])
         # print(command)
         if command[0] == "l": 
@@ -110,18 +113,18 @@ def main():
 
     # Create a thread whose job is to play audio file data.
     dev = ao.AudioDevice('pulse')
-    play_thread = threading.Thread(
-        target=play_thread_func,
-        args=(wrap, cond_filled, dev)
-    )
-    play_thread.daemon = True
-    play_thread.start()
+    # play_thread = threading.Thread(
+    #     target=play_thread_func,
+    #     args=(wrap, cond_filled, dev)
+    # )
+    # play_thread.daemon = True
+    # play_thread.start()
 
     # Enter our never-ending user I/O loop.  Because we imported the readline
     # module above, raw_input gives us nice shell-like behavior (up-arrow to
     # go backwards, etc.).
     while True:
-        line = raw_input('') # TODO : replace with >> 
+        line = raw_input('>>') # TODO : replace with >> 
 
         if ' ' in line:
             cmd, args = line.split(' ', 1)
