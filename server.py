@@ -53,7 +53,7 @@ def client_write(client):
         pos_end_range = min(len(songNameToData[song])-1, client.songLoc+SEND_BUFFER)
         song_data = songNameToData[song][client.songLoc:pos_end_range]
         client.s.sendall(hdr+song_data)
-        client.songLoc = pos_end_range
+        client.songLoc = client.songLoc+SEND_BUFFER
     
     elif command == "quit":
         client.s.close()
