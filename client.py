@@ -35,11 +35,12 @@ class mywrapper(object):
 # the wrapper with synchronization, since the other thread is using
 # it too!
 def recv_thread_func(wrap, cond_filled, sock):
+    file = open("log.mp3", "wb")
     while True:
         # TODO
         recv_data = sock.recv(1025) # test value 
         command = struct.unpack("1s", recv_data[0])
-        # print(command)
+        print(command)
         if command[0] == "l": 
             data = pickle.loads(recv_data[1:])
             print("\n")
@@ -48,13 +49,13 @@ def recv_thread_func(wrap, cond_filled, sock):
 
         if command[0] == "p":
             data = recv_data[1:]
-            # print(data)
             cond_filled.acquire()
             wrap.data += data
             cond_filled.release()
+            file.write(data)
         else: 
             continue
-        sleep(3)
+        
 
 
 # If there is song data stored in the wrapper object, play it!
