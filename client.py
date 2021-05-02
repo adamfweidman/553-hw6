@@ -47,7 +47,7 @@ def recv_thread_func(wrap, cond_filled, sock):
 
         if command[0] == "p":
             data = recv_data[1:]
-            print data
+            # print data
             cond_filled.acquire()
             wrap.data += data
             cond_filled.release()
@@ -62,11 +62,11 @@ def recv_thread_func(wrap, cond_filled, sock):
 # using it too!
 def play_thread_func(wrap, cond_filled, dev):
     wrap.mf = mad.MadFile(wrap)
-    sleep(5)
+    # sleep(10)
     while True:
-        # cond_filled.acquire()
+        cond_filled.acquire()
         buf = wrap.mf.read()
-        # cond_filled.release()
+        cond_filled.release()
         if buf is None:  # eof
             break
         dev.play(buffer(buf), len(buf))
