@@ -156,7 +156,6 @@ def main():
 
         if cmd in ['quit', 'q', 'exit']:
             sock.sendall(pickle.dumps((cmd, None)))
-            slee[]
             sys.exit(0)
             
 
