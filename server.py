@@ -136,7 +136,7 @@ def main():
             t.start()
             # t = Thread(target=client_write, args=[(client)])
             # threads.append(t)
-            t.start()
+            # t.start()
             while True:
                 next 
         s.close()
