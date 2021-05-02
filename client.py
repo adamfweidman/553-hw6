@@ -40,15 +40,17 @@ def recv_thread_func(wrap, cond_filled, sock):
         recv_data = sock.recv(2048) # test value 
         if not recv_data:
             next
-        print recv_data
-        command = pickle.loads(recv_data)
-        if command[0] == "l": 
-            _, data = pickle.loads(recv_data)
-            print("\n")
-            for song in range(len(data)):
-                print "%d) %s" % (song, data[song]) 
-        else: 
-            print recv_data
+        cond_filled.acquire()
+        wrap.data += recv_data
+        cond_filled.release()
+        # command = pickle.loads(recv_data)
+        # if command[0] == "l": 
+        #     _, data = pickle.loads(recv_data)
+        #     print("\n")
+        #     for song in range(len(data)):
+        #         print "%d) %s" % (song, data[song]) 
+        # else: 
+        #     print recv_data
         sleep(3)
 
 
@@ -57,8 +59,16 @@ def recv_thread_func(wrap, cond_filled, sock):
 # to the wrapper with synchronization, since the other thread is
 # using it too!
 def play_thread_func(wrap, cond_filled, dev):
+    wrap.mf = mad.MadFile(wrap)
+    sleep(5)
     while True:
-        pass
+        # cond_filled.acquire()
+        buf = wrap.mf.read()
+        # cond_filled.release()
+        if buf is None:  # eof
+            break
+        dev.play(buffer(buf), len(buf))
+        
         """
         TODO
         example usage of dev and wrap (see mp3-example.py for a full example):
@@ -81,7 +91,7 @@ def main():
     # Create a condition variable to synchronize the receiver and player threads.
     # In python, this implicitly creates a mutex lock too.
     # See: https://docs.python.org/2/library/threading.html#condition-objects
-    cond_filled = threading.Condition()
+    cond_filled = threading.Condition(threading.Lock())
 
     # Create a TCP socket and try connecting to the server.
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
