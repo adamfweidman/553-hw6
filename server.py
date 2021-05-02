@@ -42,6 +42,7 @@ class Client:
 def client_write(client):
     command = client.getCommand()
     song = client.getCurrentSong()
+
     
     if command == "list":
         data = struct.pack('1s',b'l')
@@ -49,11 +50,12 @@ def client_write(client):
         client.s.sendall(data)
         print(data)
     elif command == "play":
-        hdr = struct.pack('1s',b'p')
-        pos_end_range = min(len(songNameToData[song])-1, client.songLoc+SEND_BUFFER)
-        song_data = songNameToData[song][client.songLoc:pos_end_range]
-        client.s.sendall(hdr+song_data)
-        client.songLoc = pos_end_range
+        while command != "stop": 
+            hdr = struct.pack('1s',b'p')
+            pos_end_range = min(len(songNameToData[song])-1, client.songLoc+SEND_BUFFER)
+            song_data = songNameToData[song][client.songLoc:pos_end_range]
+            client.s.sendall(hdr+song_data)
+            client.songLoc = pos_end_range
     
     elif command == "quit":
         client.s.close()
@@ -81,7 +83,6 @@ def client_read(client, threads):
             t.start()
         elif command in ['s', 'stop']: 
             client.setCommand("stop")
-            client_write(client)
         elif command in ['quit', 'q', 'exit']:
             client.quit = True 
             client_write(client)
