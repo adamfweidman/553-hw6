@@ -44,9 +44,10 @@ def client_write(client):
     song = client.getCurrentSong()
     
     if command == "list":
-        # song_list_str = "[" + ",".join(songNameToData.keys()) + "]"
-        data= pickle.dumps(("l", list(songNameToData.keys())), protocol=2)
+        data = struct.pack('c', "l")
+        data =+ pickle.dumps((list(songNameToData.keys())), protocol=2)
         client.s.sendall(data)
+        print(data)
     elif command == "play":
         pos_end_range = min(len(songNameToData[song])-1, client.songLoc+SEND_BUFFER)
         song_data = songNameToData[song][client.songLoc:pos_end_range]
