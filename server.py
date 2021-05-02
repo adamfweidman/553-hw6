@@ -9,7 +9,7 @@ import pickle
 
 
 QUEUE_LENGTH = 10
-SEND_BUFFER = 1024
+SEND_BUFFER = 2048
 
 songNameToData = {}
 
@@ -42,6 +42,7 @@ class Client:
 def client_write(client):
     command = client.getCommand()
     song = client.getCurrentSong()
+
     
     if command == "list":
         data = struct.pack('1s',b'l')
@@ -49,11 +50,12 @@ def client_write(client):
         client.s.sendall(data)
         print(data)
     elif command == "play":
-        hdr = struct.pack('1s',b'p')
-        pos_end_range = min(len(songNameToData[song])-1, client.songLoc+SEND_BUFFER)
-        song_data = songNameToData[song][client.songLoc:pos_end_range]
-        client.s.send(hdr+song_data)
-        client.songLoc = client.songLoc+SEND_BUFFER
+        while command != "stop": 
+            hdr = struct.pack('1s',b'p')
+            pos_end_range = min(len(songNameToData[song])-1, client.songLoc+SEND_BUFFER)
+            song_data = songNameToData[song][client.songLoc:pos_end_range]
+            client.s.sendall(hdr+song_data)
+            client.songLoc = pos_end_range
     
     elif command == "quit":
         client.s.close()
@@ -64,7 +66,7 @@ def client_write(client):
 
 # TODO: Thread that receives commands from the client.  All recv() calls should
 # be contained in this function.
-def client_read(client):
+def client_read(client, threads):
     while True: 
         command, song = pickle.loads(client.s.recv(2048))
         if command in ["list", "l"]:
@@ -75,11 +77,12 @@ def client_read(client):
             client.setCommand("play")
             client.songNum = song 
             client.setSong(list(songNameToData.keys())[int(song)])
-            while True:
-                client_write(client)
+            # create new thread 
+            t = Thread(target=client_write, args=[(client)])
+            threads.append(t)
+            t.start()
         elif command in ['s', 'stop']: 
             client.setCommand("stop")
-            client_write(client)
         elif command in ['quit', 'q', 'exit']:
             client.quit = True 
             client_write(client)
@@ -125,7 +128,6 @@ def main():
         s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         s.bind((HOST, port))
         s.listen()
-        
         while True:
             conn, addr = s.accept()
             with conn: 
