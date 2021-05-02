@@ -130,20 +130,20 @@ def main():
         s.listen()
         while True:
             conn, addr = s.accept()
-            with conn: 
-                print("Connection from ", addr)
-                # TODO: create a socket and accept incoming connections
-                # while True:
-                client = Client(conn)
-                t = Thread(target=client_read, args=[(client)])
-                threads.append(t)
-                t.start()
-                print("added new thread")
-                # t = Thread(target=client_write, args=[(client)])
-                # threads.append(t)
-                # t.start()
-                # while True:
-                #     next 
+            # with conn: 
+            print("Connection from ", addr)
+            # TODO: create a socket and accept incoming connections
+            # while True:
+            client = Client(conn)
+            t = Thread(target=client_read, args=[client, threads])
+            threads.append(t)
+            t.start()
+            print("added new thread")
+            # t = Thread(target=client_write, args=[(client)])
+            # threads.append(t)
+            # t.start()
+            # while True:
+            #     continue 
         s.close()
 
 

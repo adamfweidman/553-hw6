@@ -42,9 +42,9 @@ def recv_thread_func(wrap, cond_filled, sock):
     while True:
         # TODO
         recv_data = sock.recv(2049) # test value 
-        if recv_data == None:
+        if recv_data == '':
             continue
-        print(recv_data)
+        print("here", recv_data)
          # test value 
         command = struct.unpack("1s", recv_data[0])
         # print(command)
