@@ -75,7 +75,8 @@ def client_read(client):
             client.setCommand("play")
             client.songNum = song 
             client.setSong(list(songNameToData.keys())[int(song)])
-            client_write(client)
+            while True:
+                client_write(client)
         elif command in ['s', 'stop']: 
             client.setCommand("stop")
             client_write(client)

@@ -38,11 +38,6 @@ def recv_thread_func(wrap, cond_filled, sock):
     while True:
         # TODO
         recv_data = sock.recv(2048) # test value 
-        # if not recv_data:
-        #     next
-        # cond_filled.acquire()
-        # wrap.data += recv_data
-        # cond_filled.release()
         command = struct.unpack("1s", recv_data[0])
         if command[0] == "l": 
             data = pickle.loads(recv_data[1:])
@@ -52,11 +47,12 @@ def recv_thread_func(wrap, cond_filled, sock):
 
         if command[0] == "p":
             data = recv_data[1:]
+            print data
             cond_filled.acquire()
-            wrap.data += recv_data
+            wrap.data += data
             cond_filled.release()
         else: 
-            print recv_data
+            continue
         sleep(3)
 
 
