@@ -64,7 +64,7 @@ def client_write(client):
 
 # TODO: Thread that receives commands from the client.  All recv() calls should
 # be contained in this function.
-def client_read(client):
+def client_read(client, threads):
     while True: 
         command, song = pickle.loads(client.s.recv(2048))
         if command in ["list", "l"]:
@@ -75,8 +75,10 @@ def client_read(client):
             client.setCommand("play")
             client.songNum = song 
             client.setSong(list(songNameToData.keys())[int(song)])
-            while True:
-                client_write(client)
+            # create new thread 
+            t = Thread(target=client_write, args=[(client)])
+            threads.append(t)
+            t.start()
         elif command in ['s', 'stop']: 
             client.setCommand("stop")
             client_write(client)
@@ -131,7 +133,7 @@ def main():
             # TODO: create a socket and accept incoming connections
             # while True:
             client = Client(conn)
-            t = Thread(target=client_read, args=[(client)])
+            t = Thread(target=client_read, args=[(client, threads)])
             threads.append(t)
             t.start()
             # t = Thread(target=client_write, args=[(client)])

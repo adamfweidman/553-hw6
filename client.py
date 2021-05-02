@@ -20,6 +20,9 @@ class mywrapper(object):
     def __init__(self):
         self.mf = None
         self.data = ""
+        self.ready = False 
+        self.slow_start = False 
+        self.stopped = False 
 
     # When it asks to read a specific size, give it that many bytes, and
     # update our remaining data.
@@ -38,9 +41,9 @@ def recv_thread_func(wrap, cond_filled, sock):
     file = open("log.mp3", "wb")
     while True:
         # TODO
-        recv_data = sock.recv(4097) # test value 
+        recv_data = sock.recv(2049) # test value 
         command = struct.unpack("1s", recv_data[0])
-        print(command)
+        # print(command)
         if command[0] == "l": 
             data = pickle.loads(recv_data[1:])
             print("\n")
@@ -51,11 +54,14 @@ def recv_thread_func(wrap, cond_filled, sock):
             data = recv_data[1:]
             cond_filled.acquire()
             wrap.data += data
+            wrap.ready = True 
+            wrap.slow_start = True 
             cond_filled.release()
-            file.write(data)
+            # file.write(data)
+
         else: 
             continue
-        sleep(5)
+        sleep(0.01)
         
 
 
@@ -67,12 +73,18 @@ def play_thread_func(wrap, cond_filled, dev):
     wrap.mf = mad.MadFile(wrap)
     # sleep(10)
     while True:
-        cond_filled.acquire()
-        buf = wrap.mf.read()
-        cond_filled.release()
-        if buf is None:  # eof
-            break
-        dev.play(buffer(buf), len(buf))
+        if wrap.slow_start: 
+            sleep(5)
+            cond_filled.acquire()
+            wrap.slow_start = False 
+            cond_filled.release()
+        while wrap.ready and not wrap.stopped: 
+            cond_filled.acquire()
+            buf = wrap.mf.read()
+            cond_filled.release()
+            if buf is None:  # eof
+                continue  
+            dev.play(buffer(buf), len(buf))
         
         """
         TODO
@@ -80,9 +92,6 @@ def play_thread_func(wrap, cond_filled, dev):
         buf = wrap.mf.read()
         dev.play(buffer(buf), len(buf))
         """
-        # buf = wrap.mf.read()
-        # dev.play(buffer(buf), len(buf))
-
 
 def main():
     if len(sys.argv) < 3:
@@ -123,7 +132,7 @@ def main():
     # module above, raw_input gives us nice shell-like behavior (up-arrow to
     # go backwards, etc.).
     while True:
-        line = raw_input('') # TODO : replace with >> 
+        line = raw_input('>> ')
 
         if ' ' in line:
             cmd, args = line.split(' ', 1)
@@ -136,12 +145,15 @@ def main():
             sock.sendall(pickle.dumps((cmd, None)))
 
         if cmd in ['p', 'play']:
-            # print 'The user asked to play:', args
+            print 'The user asked to play:', args
             sock.sendall(pickle.dumps((cmd, args)))
+            wrap.stopped = False  
 
         if cmd in ['s', 'stop']:
+            wrap.stopped = True 
             print 'The user asked for stop.'
             sock.sendall(pickle.dumps((cmd, None)))
+
 
         if cmd in ['quit', 'q', 'exit']:
             sock.sendall(pickle.dumps((cmd, None)))
