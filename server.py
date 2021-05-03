@@ -41,10 +41,10 @@ class Client:
 # use locks or similar synchronization tools to ensure that the two threads play
 # nice with one another!
 def client_write(client):
-    while True: 
-        command = client.getCommand()
-        song = client.getCurrentSong()
-        
+     
+    command = client.getCommand()
+    song = client.getCurrentSong()
+    while True:
         if command == "list":
             data = struct.pack('1s',b'l')
             data += pickle.dumps((list(songNameToData.keys())), protocol=2)
@@ -61,6 +61,9 @@ def client_write(client):
         elif command == "quit":
             client.s.close()
             return
+        
+        if command != "play":
+            command = ""
 
     # data = songNameToData[song]
     # client.s.send(data)
