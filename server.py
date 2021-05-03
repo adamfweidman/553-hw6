@@ -24,6 +24,7 @@ class Client:
         self.songLoc = 0
         self.quit = False 
         self.songNum = None 
+        self.playing = False
 
     def setSong(self, songName):
         self.songRequest = songName
@@ -77,6 +78,7 @@ def client_read(client, threads):
             client.songNum = song 
             client.setSong(list(songNameToData.keys())[int(song)])
             # create new thread 
+            print("new thread")
             t = Thread(target=client_write, args=[(client)])
             threads.append(t)
             t.start()
