@@ -84,10 +84,10 @@ def client_read(client, addr):
             client.onceList = 1
 
         elif command in ['p', 'play']:
-            client.setCommand("play")
-            if song not in range(len(songNameToData)):
+            if song >= len(songNameToData):
                 print("This song number is not a possibility")
             else:
+                client.setCommand("play")
                 client.songNum = song 
                 client.setSong(list(songNameToData.keys())[int(song)])
 
