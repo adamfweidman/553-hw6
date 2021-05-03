@@ -66,7 +66,6 @@ def client_write(client):
                 #print("sent:", song_data)
         
         elif command == "quit":
-            client.s.close()
             return
 
             
@@ -76,14 +75,14 @@ def client_write(client):
 
 # TODO: Thread that receives commands from the client.  All recv() calls should
 # be contained in this function.
-def client_read(client, threads):
+def client_read(client, addr):
     while True: 
         command, song = pickle.loads(client.s.recv(2048))
         if command in ["list", "l"]:
             print("List Command recieved")
             client.setCommand("list")
             client.onceList = 1
-            client_write(client)
+
         elif command in ['p', 'play']:
             client.setCommand("play")
             if song not in range(len(songNameToData)):
@@ -91,19 +90,15 @@ def client_read(client, threads):
             else:
                 client.songNum = song 
                 client.setSong(list(songNameToData.keys())[int(song)])
-                # create new thread 
-                t = Thread(target=client_write, args=[(client)])
-                threads.append(t)
-                t.start()
+
         elif command in ['s', 'stop']: 
             client.setCommand("stop")
+
         elif command in ['quit', 'q', 'exit']:
             client.quit = True 
             client.s.close() 
-            client_write(client)
-            return 
-        
-
+            print("Client Closed {}".format(addr))
+            return    
 
 def get_mp3s(musicdir):
     print("Reading music files...")
@@ -150,7 +145,7 @@ def main():
             # TODO: create a socket and accept incoming connections
             # while True:
             client = Client(conn)
-            t = Thread(target=client_read, args=[client, threads])
+            t = Thread(target=client_read, args=[client, addr])
             threads.append(t)
             t.start()
             t = Thread(target=client_write, args=[(client)])
