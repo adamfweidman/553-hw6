@@ -67,8 +67,7 @@ def client_write(client):
         elif command == "quit":
             client.s.close()
             return
-        
-        client.command = ""
+
             
 
     # data = songNameToData[song]
