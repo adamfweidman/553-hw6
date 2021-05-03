@@ -75,12 +75,17 @@ def client_read(client, threads):
             client_write(client)
         elif command in ['p', 'play']:
             client.setCommand("play")
-            client.songNum = song 
-            client.setSong(list(songNameToData.keys())[int(song)])
-            # create new thread 
-            t = Thread(target=client_write, args=[(client)])
-            threads.append(t)
-            t.start()
+
+            if song not in range(len(songNameToData)):
+                print("This song number is not a possibility")
+            else:
+                client.songNum = song 
+
+                client.setSong(list(songNameToData.keys())[int(song)])
+                # create new thread 
+                t = Thread(target=client_write, args=[(client)])
+                threads.append(t)
+                t.start()
         elif command in ['s', 'stop']: 
             client.setCommand("stop")
         elif command in ['quit', 'q', 'exit']:
