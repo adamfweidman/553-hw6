@@ -24,6 +24,7 @@ class Client:
         self.songLoc = 0
         self.quit = False 
         self.songNum = None 
+        self.playing = False
 
     def setSong(self, songName):
         self.songRequest = songName
@@ -42,7 +43,6 @@ class Client:
 def client_write(client):
     command = client.getCommand()
     song = client.getCurrentSong()
-
     
     if command == "list":
         data = struct.pack('1s',b'l')
@@ -50,7 +50,7 @@ def client_write(client):
         client.s.sendall(data)
         print(data)
     elif command == "play":
-        while command != "stop": 
+        while command != "stop" and not client.quit: 
             hdr = struct.pack('1s',b'p')
             pos_end_range = min(len(songNameToData[song])-1, client.songLoc+SEND_BUFFER)
             song_data = songNameToData[song][client.songLoc:pos_end_range]
@@ -75,7 +75,6 @@ def client_read(client, threads):
             client_write(client)
         elif command in ['p', 'play']:
             client.setCommand("play")
-
             if song not in range(len(songNameToData)):
                 print("This song number is not a possibility")
             else:
