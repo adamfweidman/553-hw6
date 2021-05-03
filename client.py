@@ -43,16 +43,17 @@ def recv_thread_func(wrap, cond_filled, sock):
         recv_data = sock.recv(2049) # test value 
         if recv_data == "":
             continue
-        command, song_num = struct.unpack("1s i", recv_data[0:1])
+        command = struct.unpack("1s", recv_data[0])
         # if command[0] != "p": 
         # print(command)
         if command[0] == "l": 
             data = pickle.loads(recv_data[1:])
-            print("\n")
+            # print("\n")
             for song in range(len(data)):
                 print "%d) %s" % (song, data[song]) 
 
         if command[0] == "p":
+            song_num = struct.unpack("1s", recv_data[1])
             data = recv_data[2:]
             cond_filled.acquire()
             if song_num != wrap.curr_song: 
@@ -148,6 +149,7 @@ def main():
         if cmd in ['l', 'list']:
             print 'The user asked for list.'
             sock.sendall(pickle.dumps((cmd, None)))
+            sleep(1)
 
         if cmd in ['p', 'play']:
             print 'The user asked to play:', args
