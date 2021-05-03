@@ -91,6 +91,7 @@ def client_read(client, addr):
                 if client.songNum != song: 
                     client.songLoc = 0 
                 client.songNum = song 
+                print("client song:", client.songNum, "\n")
                 client.setSong(list(songNameToData.keys())[int(song)])
             else:
                 print("This song number is not a possibility")
