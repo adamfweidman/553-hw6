@@ -7,6 +7,8 @@ import sys
 from threading import Lock, Thread
 import pickle 
 
+from time import sleep 
+
 
 QUEUE_LENGTH = 10
 SEND_BUFFER = 2048
@@ -48,8 +50,9 @@ def client_write(client):
         if command == "list" and client.onceList == 1:
             data = struct.pack('1s',b'l')
             data += pickle.dumps((list(songNameToData.keys())), protocol=2)
+            data += b"0" * (2049 - len(data))
             client.s.sendall(data)
-            client.onceList = 0
+            client.onceList = 0 
             # print(data)
         elif command == "play":
             while command == "play": 
@@ -65,6 +68,8 @@ def client_write(client):
         elif command == "quit":
             client.s.close()
             return
+
+            
 
     # data = songNameToData[song]
     # client.s.send(data)
