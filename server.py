@@ -49,8 +49,7 @@ def client_write(client):
         if command == "list":
             data = struct.pack('1s',b'l')
             data += pickle.dumps((list(songNameToData.keys())), protocol=2)
-            while len(data) < 2048:
-                data += None 
+            data += b"0"(2049 - len(data))
             client.s.sendall(data)
             # print(data)
         elif command == "play":
