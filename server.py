@@ -85,6 +85,7 @@ def client_read(client, threads):
             client.setCommand("stop")
         elif command in ['quit', 'q', 'exit']:
             client.quit = True 
+            client.s.close() 
             client_write(client)
             return 
         
@@ -138,12 +139,6 @@ def main():
             t = Thread(target=client_read, args=[client, threads])
             threads.append(t)
             t.start()
-            print("added new thread")
-            # t = Thread(target=client_write, args=[(client)])
-            # threads.append(t)
-            # t.start()
-            # while True:
-            #     continue 
         s.close()
 
 

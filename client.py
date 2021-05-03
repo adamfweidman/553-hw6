@@ -38,14 +38,10 @@ class mywrapper(object):
 # the wrapper with synchronization, since the other thread is using
 # it too!
 def recv_thread_func(wrap, cond_filled, sock):
-    file = open("log.mp3", "wb")
     while True:
-        # TODO
         recv_data = sock.recv(2049) # test value 
-        if recv_data == '':
+        if recv_data == "":
             continue
-        print("here", recv_data)
-         # test value 
         command = struct.unpack("1s", recv_data[0])
         # print(command)
         if command[0] == "l": 
@@ -61,7 +57,6 @@ def recv_thread_func(wrap, cond_filled, sock):
             wrap.ready = True 
             wrap.slow_start = True 
             cond_filled.release()
-            # file.write(data)
 
         else: 
             continue
