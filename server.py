@@ -27,7 +27,7 @@ class Client:
         self.quit = False 
         self.songNum = None 
         self.playing = False
-        self.onceList = 0 
+        self.onceList = 0
 
     def setSong(self, songName):
         self.songRequest = songName
@@ -63,6 +63,7 @@ def client_write(client):
                 song_data = songNameToData[song][client.songLoc:pos_end_range]
                 client.s.sendall(hdr+song_data)
                 client.songLoc = pos_end_range
+                #print("sent:", song_data)
         
         elif command == "quit":
             return
@@ -84,10 +85,12 @@ def client_read(client, addr):
 
         elif command in ['p', 'play']:
             client.setCommand("play")
-            client.songNum = song 
-            client.setSong(list(songNameToData.keys())[int(song)])
+            if song not in range(len(songNameToData)):
+                print("This song number is not a possibility")
+            else:
+                client.songNum = song 
+                client.setSong(list(songNameToData.keys())[int(song)])
 
-            
         elif command in ['s', 'stop']: 
             client.setCommand("stop")
 
@@ -95,9 +98,7 @@ def client_read(client, addr):
             client.quit = True 
             client.s.close() 
             print("Client Closed {}".format(addr))
-            return 
-        
-
+            return    
 
 def get_mp3s(musicdir):
     print("Reading music files...")
@@ -131,7 +132,7 @@ def main():
     songs = get_mp3s(sys.argv[2])
     threads = []
 
-    HOST = '172.31.32.221'
+    HOST = 'localhost'
 
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)

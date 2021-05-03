@@ -121,12 +121,12 @@ def main():
 
     # Create a thread whose job is to play audio file data.
     dev = ao.AudioDevice('pulse')
-    play_thread = threading.Thread(
-        target=play_thread_func,
-        args=(wrap, cond_filled, dev)
-    )
-    play_thread.daemon = True
-    play_thread.start()
+    # play_thread = threading.Thread(
+    #     target=play_thread_func,
+    #     args=(wrap, cond_filled, dev)
+    # )
+    # play_thread.daemon = True
+    # play_thread.start()
 
     # Enter our never-ending user I/O loop.  Because we imported the readline
     # module above, raw_input gives us nice shell-like behavior (up-arrow to
