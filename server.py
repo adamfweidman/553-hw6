@@ -94,7 +94,7 @@ def client_read(client, addr):
         elif command in ['quit', 'q', 'exit']:
             client.quit = True 
             client.s.close() 
-            print("Client Closed ({})".format(addr))
+            print("Client Closed {}".format(addr))
             return 
         
 
