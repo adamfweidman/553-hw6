@@ -80,8 +80,10 @@ def client_read(client, threads):
             if song not in range(len(songNameToData)):
                 print("This song number is not a possibility")
             else:
-                client.songNum = song 
 
+
+
+                client.songNum = song 
                 client.setSong(list(songNameToData.keys())[int(song)])
                 # create new thread 
                 t = Thread(target=client_write, args=[(client)])
@@ -145,12 +147,9 @@ def main():
             t = Thread(target=client_read, args=[client, threads])
             threads.append(t)
             t.start()
-<<<<<<< HEAD
-=======
             t = Thread(target=client_write, args=[(client)])
             threads.append(t)
             t.start()
->>>>>>> 182135eefd0cbadb38ddb43878e51610cbd0b4f8
         s.close()
 
 
