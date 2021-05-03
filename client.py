@@ -43,8 +43,8 @@ def recv_thread_func(wrap, cond_filled, sock):
         if recv_data == "":
             continue
         command = struct.unpack("1s", recv_data[0])
-        if command[0] != "p": 
-            print(command)
+        # if command[0] != "p": 
+            # print(command)
         if command[0] == "l": 
             data = pickle.loads(recv_data[1:])
             print("\n")
