@@ -44,7 +44,7 @@ def recv_thread_func(wrap, cond_filled, sock):
             continue
         command = struct.unpack("1s", recv_data[0])
         # if command[0] != "p": 
-            # print(command)
+        print(command)
         if command[0] == "l": 
             data = pickle.loads(recv_data[1:])
             print("\n")
@@ -157,6 +157,7 @@ def main():
 
         if cmd in ['quit', 'q', 'exit']:
             sock.sendall(pickle.dumps((cmd, None)))
+            sleep(0.5)
             sys.exit(0)
             
 

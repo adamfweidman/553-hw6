@@ -65,7 +65,6 @@ def client_write(client):
                 client.songLoc = pos_end_range
         
         elif command == "quit":
-            client.s.close()
             return
 
             
@@ -82,20 +81,18 @@ def client_read(client, threads):
             print("List Command recieved")
             client.setCommand("list")
             client.onceList = 1
-            client_write(client)
+
         elif command in ['p', 'play']:
             client.setCommand("play")
             client.songNum = song 
             client.setSong(list(songNameToData.keys())[int(song)])
-            # create new thread 
-            # print("new thread")
+
             
         elif command in ['s', 'stop']: 
             client.setCommand("stop")
         elif command in ['quit', 'q', 'exit']:
             client.quit = True 
             client.s.close() 
-            client_write(client)
             return 
         
 
