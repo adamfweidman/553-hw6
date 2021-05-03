@@ -85,6 +85,8 @@ def client_read(client, addr):
 
         elif command in ['p', 'play']:
             if int(song) in range(len(songNameToData)):
+                print("client song:", client.songNum)
+                print("command song:", song)
                 client.setCommand("play")
                 if client.songNum != song: 
                     client.songLoc = 0 
