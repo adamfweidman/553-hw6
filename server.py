@@ -48,7 +48,7 @@ def client_write(client):
         command = client.getCommand()
         song = client.getCurrentSong()
         if command == "list" and client.onceList == 1:
-            data = struct.pack('1si',b'l',int(song))
+            data = struct.pack('1s',b'l')
             data += pickle.dumps((list(songNameToData.keys())), protocol=2)
             data += b"0" * (2049 - len(data))
             client.s.sendall(data)
@@ -58,7 +58,7 @@ def client_write(client):
             # while command == "play": 
                 # command = client.getCommand()
                 # if command != "stop" and not client.quit: 
-            hdr = struct.pack('1s',b'p')
+            hdr = struct.pack('1s i',b'p',int(song))
             pos_end_range = min(len(songNameToData[song])-1, client.songLoc+SEND_BUFFER)
             song_data = songNameToData[song][client.songLoc:pos_end_range]
             client.s.sendall(hdr+song_data)
