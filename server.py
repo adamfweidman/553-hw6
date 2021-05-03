@@ -41,25 +41,27 @@ class Client:
 # use locks or similar synchronization tools to ensure that the two threads play
 # nice with one another!
 def client_write(client):
-    command = client.getCommand()
-    song = client.getCurrentSong()
-    
-    if command == "list":
-        data = struct.pack('1s',b'l')
-        data += pickle.dumps((list(songNameToData.keys())), protocol=2)
-        client.s.sendall(data)
-        print(data)
-    elif command == "play":
-        while command != "stop" and not client.quit: 
-            hdr = struct.pack('1s',b'p')
-            pos_end_range = min(len(songNameToData[song])-1, client.songLoc+SEND_BUFFER)
-            song_data = songNameToData[song][client.songLoc:pos_end_range]
-            client.s.sendall(hdr+song_data)
-            client.songLoc = pos_end_range
-    
-    elif command == "quit":
-        client.s.close()
-        return
+    while True:
+        command = client.getCommand()
+        song = client.getCurrentSong()
+        if command == "list":
+            data = struct.pack('1s',b'l')
+            data += pickle.dumps((list(songNameToData.keys())), protocol=2)
+            client.s.sendall(data)
+            # print(data)
+        elif command == "play":
+            while command == "play": 
+                command = client.getCommand()
+                # if command != "stop" and not client.quit: 
+                hdr = struct.pack('1s',b'p')
+                pos_end_range = min(len(songNameToData[song])-1, client.songLoc+SEND_BUFFER)
+                song_data = songNameToData[song][client.songLoc:pos_end_range]
+                client.s.sendall(hdr+song_data)
+                client.songLoc = pos_end_range
+        
+        elif command == "quit":
+            client.s.close()
+            return
 
     # data = songNameToData[song]
     # client.s.send(data)
@@ -143,6 +145,12 @@ def main():
             t = Thread(target=client_read, args=[client, threads])
             threads.append(t)
             t.start()
+<<<<<<< HEAD
+=======
+            t = Thread(target=client_write, args=[(client)])
+            threads.append(t)
+            t.start()
+>>>>>>> 182135eefd0cbadb38ddb43878e51610cbd0b4f8
         s.close()
 
 
