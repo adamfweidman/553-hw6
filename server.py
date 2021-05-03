@@ -59,6 +59,7 @@ def client_write(client):
                 # command = client.getCommand()
                 # if command != "stop" and not client.quit: 
             hdr = struct.pack('1s i',b'p',int(client.songNum))
+            print(struct.calcsize(hdr))
             pos_end_range = min(len(songNameToData[song])-1, client.songLoc+SEND_BUFFER)
             song_data = songNameToData[song][client.songLoc:pos_end_range]
             client.s.sendall(hdr+song_data)
