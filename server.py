@@ -55,6 +55,7 @@ def client_write(client):
             client.onceList = 0 
             # print(data)
         elif command == "play":
+            print("current song to play:", song)
             # while command == "play": 
                 # command = client.getCommand()
                 # if command != "stop" and not client.quit: 
