@@ -41,17 +41,18 @@ class Client:
 # use locks or similar synchronization tools to ensure that the two threads play
 # nice with one another!
 def client_write(client):
-     
-    command = client.getCommand()
-    song = client.getCurrentSong()
     while True:
+        command = client.getCommand()
+        song = client.getCurrentSong()
         if command == "list":
             data = struct.pack('1s',b'l')
             data += pickle.dumps((list(songNameToData.keys())), protocol=2)
             client.s.sendall(data)
-            print(data)
+            # print(data)
         elif command == "play":
-            if command != "stop" and not client.quit: 
+            while command == "play": 
+                command = client.getCommand()
+                # if command != "stop" and not client.quit: 
                 hdr = struct.pack('1s',b'p')
                 pos_end_range = min(len(songNameToData[song])-1, client.songLoc+SEND_BUFFER)
                 song_data = songNameToData[song][client.songLoc:pos_end_range]
@@ -61,9 +62,6 @@ def client_write(client):
         elif command == "quit":
             client.s.close()
             return
-        
-        if command != "play":
-            command = ""
 
     # data = songNameToData[song]
     # client.s.send(data)
