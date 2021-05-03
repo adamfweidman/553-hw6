@@ -25,6 +25,7 @@ class Client:
         self.quit = False 
         self.songNum = None 
         self.playing = False
+        self.onceList = 0
 
     def setSong(self, songName):
         self.songRequest = songName
@@ -44,10 +45,11 @@ def client_write(client):
     while True:
         command = client.getCommand()
         song = client.getCurrentSong()
-        if command == "list":
+        if command == "list" and client.onceList == 1:
             data = struct.pack('1s',b'l')
             data += pickle.dumps((list(songNameToData.keys())), protocol=2)
             client.s.sendall(data)
+            client.onceList = 0
             # print(data)
         elif command == "play":
             while command == "play": 
@@ -58,6 +60,7 @@ def client_write(client):
                 song_data = songNameToData[song][client.songLoc:pos_end_range]
                 client.s.sendall(hdr+song_data)
                 client.songLoc = pos_end_range
+                #print("sent:", song_data)
         
         elif command == "quit":
             client.s.close()
@@ -74,15 +77,13 @@ def client_read(client, threads):
         if command in ["list", "l"]:
             print("List Command recieved")
             client.setCommand("list")
+            client.onceList = 1
             client_write(client)
         elif command in ['p', 'play']:
             client.setCommand("play")
             if song not in range(len(songNameToData)):
                 print("This song number is not a possibility")
             else:
-
-
-
                 client.songNum = song 
                 client.setSong(list(songNameToData.keys())[int(song)])
                 # create new thread 
