@@ -23,6 +23,7 @@ class mywrapper(object):
         self.ready = False 
         self.slow_start = False 
         self.stopped = False 
+        self.curr_song = 99
 
     # When it asks to read a specific size, give it that many bytes, and
     # update our remaining data.
@@ -42,7 +43,7 @@ def recv_thread_func(wrap, cond_filled, sock):
         recv_data = sock.recv(2049) # test value 
         if recv_data == "":
             continue
-        command = struct.unpack("1s", recv_data[0])
+        command, song_num = struct.unpack("1s i", recv_data[0:1])
         # if command[0] != "p": 
         # print(command)
         if command[0] == "l": 
@@ -52,11 +53,15 @@ def recv_thread_func(wrap, cond_filled, sock):
                 print "%d) %s" % (song, data[song]) 
 
         if command[0] == "p":
-            data = recv_data[1:]
+            data = recv_data[2:]
             cond_filled.acquire()
-            wrap.data += data
-            wrap.ready = True 
-            wrap.slow_start = True 
+            if song_num != wrap.curr_song: 
+                wrap.data = data 
+                wrap.curr_song = song_num
+            else:
+                wrap.data += data
+            wrap.ready = True
+            wrap.slow_start = True
             cond_filled.release()
 
         else: 

@@ -11,7 +11,7 @@ from time import sleep
 
 
 QUEUE_LENGTH = 10
-SEND_BUFFER = 2048
+SEND_BUFFER = 2047
 
 songNameToData = {}
 
@@ -48,14 +48,13 @@ def client_write(client):
         command = client.getCommand()
         song = client.getCurrentSong()
         if command == "list" and client.onceList == 1:
-            data = struct.pack('1s',b'l')
+            data = struct.pack('1si',b'l',int(song))
             data += pickle.dumps((list(songNameToData.keys())), protocol=2)
             data += b"0" * (2049 - len(data))
             client.s.sendall(data)
             client.onceList = 0 
             # print(data)
         elif command == "play":
-            print("current song to play:", song)
             # while command == "play": 
                 # command = client.getCommand()
                 # if command != "stop" and not client.quit: 
@@ -86,13 +85,10 @@ def client_read(client, addr):
 
         elif command in ['p', 'play']:
             if int(song) in range(len(songNameToData)):
-                print("client song:", client.songNum)
-                print("command song:", song)
                 client.setCommand("play")
                 if client.songNum != song: 
                     client.songLoc = 0 
                 client.songNum = song 
-                print("client song:", client.songNum, "\n")
                 client.setSong(list(songNameToData.keys())[int(song)])
             else:
                 print("This song number is not a possibility")
