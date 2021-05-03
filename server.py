@@ -55,14 +55,14 @@ def client_write(client):
             client.onceList = 0 
             # print(data)
         elif command == "play":
-            while command == "play": 
-                command = client.getCommand()
+            # while command == "play": 
+                # command = client.getCommand()
                 # if command != "stop" and not client.quit: 
-                hdr = struct.pack('1s',b'p')
-                pos_end_range = min(len(songNameToData[song])-1, client.songLoc+SEND_BUFFER)
-                song_data = songNameToData[song][client.songLoc:pos_end_range]
-                client.s.sendall(hdr+song_data)
-                client.songLoc = pos_end_range
+            hdr = struct.pack('1s',b'p')
+            pos_end_range = min(len(songNameToData[song])-1, client.songLoc+SEND_BUFFER)
+            song_data = songNameToData[song][client.songLoc:pos_end_range]
+            client.s.sendall(hdr+song_data)
+            client.songLoc = pos_end_range
                 #print("sent:", song_data)
         
         elif command == "quit":
@@ -86,6 +86,8 @@ def client_read(client, addr):
         elif command in ['p', 'play']:
             if int(song) in range(len(songNameToData)):
                 client.setCommand("play")
+                if client.songNum != song: 
+                    client.songLoc = 0 
                 client.songNum = song 
                 client.setSong(list(songNameToData.keys())[int(song)])
             else:
