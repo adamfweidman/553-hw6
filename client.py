@@ -23,7 +23,7 @@ class mywrapper(object):
         self.ready = False 
         self.slow_start = False 
         self.stopped = False 
-        self.curr_song = 99
+        self.curr_song = ""
 
     # When it asks to read a specific size, give it that many bytes, and
     # update our remaining data.
@@ -47,25 +47,32 @@ def recv_thread_func(wrap, cond_filled, sock):
         if command[0] != "p" and command[0] != 'l': 
             print(command)
             continue
+            # command = struct.unpack("1s", sock.recv(2050)[0])
         if command[0] == "l": 
             data = pickle.loads(recv_data[1:])
             for song in range(len(data)):
                 print "%d) %s" % (song, data[song]) 
 
         if command[0] == "p":
-            __, song_num = struct.unpack("1s 1s", str(recv_data[0:2]))
+            __, song_num = struct.unpack("1s1s", str(recv_data[0:2]))
             # print song_num
             data = recv_data[2:]
-            cond_filled.acquire()
+            # print(recv_data)
+            # print(song_num)
+            # print(wrap.curr_song)
             if song_num != wrap.curr_song: 
-                wrap.data = data 
-                wrap.curr_song = song_num
+                print("wrong song")
+                # wrap.data = data 
+                # wrap.curr_song = song_num
             else:
-                wrap.data += data
+                # while cond_filled:
+                #     continue 
+                cond_filled.acquire()
+                wrap.data += data 
+                cond_filled.release()
             wrap.ready = True
-            wrap.slow_start = True
-            cond_filled.release()
-
+            # wrap.slow_start = True
+            
         else: 
             continue
         sleep(0.01)
@@ -80,18 +87,19 @@ def play_thread_func(wrap, cond_filled, dev):
     wrap.mf = mad.MadFile(wrap)
     # sleep(10)
     while True:
-        if wrap.slow_start: 
-            sleep(5)
-            cond_filled.acquire()
-            wrap.slow_start = False 
-            cond_filled.release()
-        while wrap.ready and not wrap.stopped: 
+        # if wrap.slow_start: 
+        #     sleep(5)
+        #     cond_filled.acquire()
+        #     wrap.slow_start = False 
+        #     cond_filled.release()
+        if wrap.ready and not wrap.stopped: 
             cond_filled.acquire()
             buf = wrap.mf.read()
             cond_filled.release()
             if buf is None:  # eof
                 continue  
-            dev.play(buffer(buf), len(buf))
+            else:
+                dev.play(buffer(buf), len(buf))
 
 
 def main():
@@ -149,7 +157,13 @@ def main():
         if cmd in ['p', 'play']:
             print 'The user asked to play:', args
             sock.sendall(pickle.dumps((cmd, args)))
+            cond_filled.acquire()
+            if args != wrap.curr_song:
+                wrap.slow_start = True 
+            wrap.curr_song = args
             wrap.stopped = False  
+            wrap.data = ""
+            cond_filled.release()
 
         if cmd in ['s', 'stop']:
             wrap.stopped = True 

@@ -45,32 +45,38 @@ class Client:
 # nice with one another!
 def client_write(client, lock):
     while True:
-        client.lock.acquire()
+        
         command = client.getCommand()
         song = client.getCurrentSong()
+        client.lock.acquire()
         if command == "list" and client.onceList == 1:
             data = struct.pack('1s',b'l')
             data += pickle.dumps((list(songNameToData.keys())), protocol=2)
-            data += b"0" * (2050 - len(data))
+            data += b"0" * (SEND_BUFFER + 2 - len(data))
             client.s.sendall(data)
             client.onceList = 0 
             # print(data)
-        elif command == "play":
+        elif client.playing:
             # while command == "play": 
                 # command = client.getCommand()
                 # if command != "stop" and not client.quit: 
             hdr = struct.pack('1s 1s',b'p', bytes(client.songNum, encoding='utf-8'))
             # print(struct.calcsize(hdr))
             pos_end_range = min(len(songNameToData[song])-1, client.songLoc+SEND_BUFFER)
+            
+            
             song_data = songNameToData[song][client.songLoc:pos_end_range]
-            client.s.sendall(hdr+song_data)
+            print(client.s.send(hdr+song_data))
             client.songLoc = pos_end_range
                 #print("sent:", song_data)
+            if client.songLoc == len(songNameToData[song])-1:
+                client.playing = False
         
         elif client.quit:
-            client.lock.release
+            client.lock.release()
             return
         client.lock.release()
+        sleep(0.01)
 
             
 
@@ -95,6 +101,7 @@ def client_read(client, addr, lock):
                     client.songLoc = 0 
                 client.songNum = song 
                 client.setSong(list(songNameToData.keys())[int(song)])
+                client.playing = True
                 print("[playing] %s" % list(songNameToData.keys())[int(song)])
             else:
                 print("This song number is not a possibility")
@@ -102,6 +109,7 @@ def client_read(client, addr, lock):
 
         elif command in ['s', 'stop']: 
             client.setCommand("stop")
+            client.playing = False
             print("[stopping]")
 
         elif command in ['quit', 'q', 'exit']:
@@ -111,6 +119,7 @@ def client_read(client, addr, lock):
             lock.release()
             return    
         client.lock.release()
+        sleep(0.1)
 
 def get_mp3s(musicdir):
     print("Reading music files...")
@@ -126,6 +135,8 @@ def get_mp3s(musicdir):
             songName = filename.split(".mp3")[0]
             songNameToData[songName] = filedata
             songs.append(songName)
+            songFile.close()
+
         # TODO: Store song metadata for future use.  You may also want to build
         # the song list once and send to any clients that need it.
         #print(songNameToData)
@@ -144,7 +155,8 @@ def main():
     songs = get_mp3s(sys.argv[2])
     threads = []
 
-    HOST = '172.31.32.221'
+    # HOST = '172.31.32.221'
+    HOST = 'localhost'
 
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
