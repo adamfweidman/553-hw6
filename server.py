@@ -94,12 +94,14 @@ def client_read(client, addr, lock):
                     client.songLoc = 0 
                 client.songNum = song 
                 client.setSong(list(songNameToData.keys())[int(song)])
+                print("[playing] %s" % list(songNameToData.keys())[int(song)])
             else:
                 print("This song number is not a possibility")
                 
 
         elif command in ['s', 'stop']: 
             client.setCommand("stop")
+            print("[stopping]")
 
         elif command in ['quit', 'q', 'exit']:
             client.quit = True 
