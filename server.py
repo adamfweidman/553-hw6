@@ -45,13 +45,13 @@ class Client:
 # nice with one another!
 def client_write(client, lock):
     while True:
-        lock.acquire()
+        client.lock.acquire()
         command = client.getCommand()
         song = client.getCurrentSong()
         if command == "list" and client.onceList == 1:
             data = struct.pack('1s',b'l')
             data += pickle.dumps((list(songNameToData.keys())), protocol=2)
-            data += b"0" * (2049 - len(data))
+            data += b"0" * (2050 - len(data))
             client.s.sendall(data)
             client.onceList = 0 
             # print(data)
@@ -68,8 +68,9 @@ def client_write(client, lock):
                 #print("sent:", song_data)
         
         elif client.quit:
+            client.lock.release
             return
-        lock.release()
+        client.lock.release()
 
             
 
@@ -81,7 +82,7 @@ def client_write(client, lock):
 def client_read(client, addr, lock):
     while True: 
         command, song = pickle.loads(client.s.recv(2048))
-        lock.acquire()
+        client.lock.acquire()
         if command in ["list", "l"]:
             print("List Command recieved")
             client.setCommand("list")
@@ -109,7 +110,7 @@ def client_read(client, addr, lock):
             print("Client Closed {}".format(addr))
             lock.release()
             return    
-        lock.release()
+        client.lock.release()
 
 def get_mp3s(musicdir):
     print("Reading music files...")
@@ -157,6 +158,7 @@ def main():
             # while True:
             lock = Lock()
             client = Client(conn)
+            client.lock = lock
             t = Thread(target=client_read, args=(client, addr, lock))
             threads.append(t)
             t.start()
