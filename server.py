@@ -43,8 +43,9 @@ class Client:
 # be passed to this thread through the associated Client object.  Make sure you
 # use locks or similar synchronization tools to ensure that the two threads play
 # nice with one another!
-def client_write(client):
+def client_write(client, lock):
     while True:
+        lock.acquire()
         command = client.getCommand()
         song = client.getCurrentSong()
         if command == "list" and client.onceList == 1:
@@ -66,8 +67,9 @@ def client_write(client):
             client.songLoc = pos_end_range
                 #print("sent:", song_data)
         
-        elif command == "quit":
+        elif client.quit:
             return
+        lock.release()
 
             
 
@@ -76,9 +78,10 @@ def client_write(client):
 
 # TODO: Thread that receives commands from the client.  All recv() calls should
 # be contained in this function.
-def client_read(client, addr):
+def client_read(client, addr, lock):
     while True: 
         command, song = pickle.loads(client.s.recv(2048))
+        lock.acquire()
         if command in ["list", "l"]:
             print("List Command recieved")
             client.setCommand("list")
@@ -102,7 +105,9 @@ def client_read(client, addr):
             client.quit = True 
             client.s.close() 
             print("Client Closed {}".format(addr))
+            lock.release()
             return    
+        lock.release()
 
 def get_mp3s(musicdir):
     print("Reading music files...")
@@ -148,11 +153,12 @@ def main():
             print("Connection from ", addr)
             # TODO: create a socket and accept incoming connections
             # while True:
+            lock = Lock()
             client = Client(conn)
-            t = Thread(target=client_read, args=[client, addr])
+            t = Thread(target=client_read, args=(client, addr, lock))
             threads.append(t)
             t.start()
-            t = Thread(target=client_write, args=[(client)])
+            t = Thread(target=client_write, args=(client, lock))
             threads.append(t)
             t.start()
         s.close()

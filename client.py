@@ -40,21 +40,21 @@ class mywrapper(object):
 # it too!
 def recv_thread_func(wrap, cond_filled, sock):
     while True:
-        recv_data = sock.recv(2049) # test value 
+        recv_data = sock.recv(2050) # test value 
         if recv_data == "":
             continue
         command = struct.unpack("1s", recv_data[0])
-        # if command[0] != "p": 
-        # print(command)
+        if command[0] != "p" and command[0] != 'l': 
+            print(command)
+            continue
         if command[0] == "l": 
             data = pickle.loads(recv_data[1:])
-            # print("\n")
             for song in range(len(data)):
                 print "%d) %s" % (song, data[song]) 
 
         if command[0] == "p":
-            song_num = struct.unpack("1s1s", str(recv_data[0:2]))
-            print song_num
+            __, song_num = struct.unpack("1s 1s", str(recv_data[0:2]))
+            # print song_num
             data = recv_data[2:]
             cond_filled.acquire()
             if song_num != wrap.curr_song: 
@@ -92,13 +92,7 @@ def play_thread_func(wrap, cond_filled, dev):
             if buf is None:  # eof
                 continue  
             dev.play(buffer(buf), len(buf))
-        
-        """
-        TODO
-        example usage of dev and wrap (see mp3-example.py for a full example):
-        buf = wrap.mf.read()
-        dev.play(buffer(buf), len(buf))
-        """
+
 
 def main():
     if len(sys.argv) < 3:
