@@ -155,8 +155,8 @@ def main():
     songs = get_mp3s(sys.argv[2])
     threads = []
 
-    # HOST = '172.31.32.221'
-    HOST = 'localhost'
+    HOST = '172.31.32.221'
+    # HOST = 'localhost'
 
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
