@@ -64,13 +64,15 @@ def client_write(client, lock):
             # print(struct.calcsize(hdr))
             pos_end_range = min(len(songNameToData[song])-1, client.songLoc+SEND_BUFFER)
             
-            
             song_data = songNameToData[song][client.songLoc:pos_end_range]
-            print(client.s.send(hdr+song_data))
-            client.songLoc = pos_end_range
-                #print("sent:", song_data)
+
             if client.songLoc == len(songNameToData[song])-1:
                 client.playing = False
+                song_data += b"0" * (SEND_BUFFER + 3 - len(song_data))
+            # print(client.s.send(hdr+song_data))
+            client.songLoc = pos_end_range
+                #print("sent:", song_data)
+            
         
         elif client.quit:
             client.lock.release()
