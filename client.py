@@ -40,7 +40,7 @@ class mywrapper(object):
 # it too!
 def recv_thread_func(wrap, cond_filled, sock):
     while True:
-        recv_data = sock.recv(2050) # test value 
+        recv_data = sock.recv(2051) # test value 
         if recv_data == "":
             continue
         command = struct.unpack("1s", recv_data[0])
@@ -54,9 +54,9 @@ def recv_thread_func(wrap, cond_filled, sock):
                 print "%d) %s" % (song, data[song]) 
 
         if command[0] == "p":
-            __, song_num = struct.unpack("1s1s", str(recv_data[0:2]))
+            __, song_num = struct.unpack("1s2s", str(recv_data[0:3]))
             # print song_num
-            data = recv_data[2:]
+            data = recv_data[3:]
             # print(recv_data)
             # print(song_num)
             # print(wrap.curr_song)
