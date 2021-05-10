@@ -66,7 +66,7 @@ def client_write(client, lock):
             
             
             song_data = songNameToData[song][client.songLoc:pos_end_range]
-            client.s.send(hdr+song_data)
+            print(client.s.send(hdr+song_data))
             client.songLoc = pos_end_range
                 #print("sent:", song_data)
             if client.songLoc == len(songNameToData[song])-1:
@@ -76,7 +76,7 @@ def client_write(client, lock):
             client.lock.release()
             return
         client.lock.release()
-        sleep(0.01)
+        sleep(0.05)
 
             
 
