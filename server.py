@@ -102,7 +102,7 @@ def client_read(client, addr, lock):
                 client.songNum = song 
                 client.setSong(list(songNameToData.keys())[int(song)])
                 client.playing = True
-                get_song(client.getCurrentSong())
+                # get_song(client.getCurrentSong())
                 sleep(1)
                 print("[playing] %s" % list(songNameToData.keys())[int(song)])
             else:
@@ -133,10 +133,10 @@ def get_mp3s(musicdir):
         else: 
             curDir = os.getcwd() + "/" + musicdir + "/" + filename
             songFile = open(curDir, 'rb')
-            # filedata = songFile.read()
+            filedata = songFile.read()
             songName = filename.split(".mp3")[0]
-            # songNameToData[songName] = filedata
-            songNameToData[songName] = "" 
+            songNameToData[songName] = filedata
+            # songNameToData[songName] = "" 
             songs.append(songName)
             songFile.close()
 
