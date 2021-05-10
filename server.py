@@ -167,7 +167,7 @@ def main():
 
     music = sys.argv[2]
 
-    HOST = '172.31.32.221'
+    HOST = sys.argv[3]
     # HOST = 'localhost'
 
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
