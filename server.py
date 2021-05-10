@@ -69,7 +69,7 @@ def client_write(client, lock):
             if client.songLoc == len(songNameToData[song])-1:
                 client.playing = False
                 song_data += b"0" * (SEND_BUFFER + 3 - len(song_data))
-            # print(client.s.send(hdr+song_data))
+           client.s.send(hdr+song_data)
             client.songLoc = pos_end_range
                 #print("sent:", song_data)
             
