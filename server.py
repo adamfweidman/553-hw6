@@ -156,7 +156,7 @@ def get_song(song_name):
 
 def main():
     if len(sys.argv) != 3:
-        sys.exit("Usage: python server.py [port] [musicdir]")
+        sys.exit("Usage: python server.py [port] [musicdir] [local ip]")
     if not os.path.isdir(sys.argv[2]):
         sys.exit("Directory '{0}' does not exist".format(sys.argv[2]))
 
