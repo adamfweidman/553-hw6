@@ -11,7 +11,7 @@ from time import sleep
 
 
 QUEUE_LENGTH = 10
-SEND_BUFFER = 2048
+SEND_BUFFER = 2045
 
 songNameToData = {}
 music = "music" 
