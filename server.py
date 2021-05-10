@@ -119,7 +119,7 @@ def client_read(client, addr, lock):
             lock.release()
             return    
         client.lock.release()
-        sleep(0.1)
+        # sleep(0.1)
 
 def get_mp3s(musicdir):
     print("Reading music files...")
