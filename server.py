@@ -14,7 +14,7 @@ QUEUE_LENGTH = 10
 SEND_BUFFER = 2048
 
 songNameToData = {}
-
+music = "music" 
 
 # per-client struct
 class Client:
@@ -102,6 +102,8 @@ def client_read(client, addr, lock):
                 client.songNum = song 
                 client.setSong(list(songNameToData.keys())[int(song)])
                 client.playing = True
+                get_song(client.getCurrentSong())
+                sleep(1)
                 print("[playing] %s" % list(songNameToData.keys())[int(song)])
             else:
                 print("This song number is not a possibility")
@@ -119,7 +121,7 @@ def client_read(client, addr, lock):
             lock.release()
             return    
         client.lock.release()
-        # sleep(0.1)
+        sleep(0.1)
 
 def get_mp3s(musicdir):
     print("Reading music files...")
@@ -130,10 +132,11 @@ def get_mp3s(musicdir):
             continue
         else: 
             curDir = os.getcwd() + "/" + musicdir + "/" + filename
-            songFile =  open(curDir, 'rb')
-            filedata = songFile.read()
+            songFile = open(curDir, 'rb')
+            # filedata = songFile.read()
             songName = filename.split(".mp3")[0]
-            songNameToData[songName] = filedata
+            # songNameToData[songName] = filedata
+            songNameToData[songName] = "" 
             songs.append(songName)
             songFile.close()
 
@@ -143,6 +146,11 @@ def get_mp3s(musicdir):
 
     print("Found {0} song(s)!".format(len(songs)))
     return songs 
+
+def get_song(song_name): 
+    curDir = os.getcwd() +"/"+ music + "/" + song_name + ".mp3"
+    with open(curDir, 'rb') as f:
+        songNameToData[song_name] = f.read()
 
 def main():
     if len(sys.argv) != 3:
@@ -154,6 +162,8 @@ def main():
     #songs, songlist = get_mp3s(sys.argv[2])
     songs = get_mp3s(sys.argv[2])
     threads = []
+
+    music = sys.argv[2]
 
     HOST = '172.31.32.221'
     # HOST = 'localhost'

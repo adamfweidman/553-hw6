@@ -45,7 +45,7 @@ def recv_thread_func(wrap, cond_filled, sock):
             continue
         command = struct.unpack("1s", recv_data[0])
         if command[0] != "p" and command[0] != 'l': 
-            print(command)
+            # print(command)
             continue
             # command = struct.unpack("1s", sock.recv(2050)[0])
         if command[0] == "l": 
@@ -85,7 +85,6 @@ def recv_thread_func(wrap, cond_filled, sock):
 # using it too!
 def play_thread_func(wrap, cond_filled, dev):
     wrap.mf = mad.MadFile(wrap)
-    # sleep(10)
     while True:
         # if wrap.slow_start: 
         #     sleep(5)
