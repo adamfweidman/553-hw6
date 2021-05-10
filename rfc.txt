@@ -13,7 +13,7 @@ ISSN: 2070-1721                                              10 May 2021
 Abstract
 
    This document proposes a custom protocol to implement Server/Client
-   music Ssreaming
+   music Streaming
 
 Status of This Memo
 
@@ -102,8 +102,8 @@ Table of Contents
       for quit the header is "q".
 
    *  When the client requests a song the packet sent to the server the
-      header will be "p" and then the song number, say "s", encoded as
-      the header.
+      header will be "p" and then two digits corresponding to the song
+      number, say "s", encoded as the header.
 
 3.2.  Message transitions from server/client
 

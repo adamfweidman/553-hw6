@@ -8,7 +8,7 @@
 <meta content="Adam Weidman" name="author">
 <meta content="Micah Weitzman" name="author">
 <meta content="
-       This document proposes a custom protocol to implement Server/Client music Ssreaming 
+       This document proposes a custom protocol to implement Server/Client music Streaming 
     " name="description">
 <meta content="xml2rfc 2.47.0" name="generator">
 <meta content="5111" name="rfc.number">
@@ -1175,7 +1175,7 @@ dl > dd > dl {
 <h1 id="title">Custom Protocol to Implement Server/Client Music Streaming</h1>
 <section id="section-abstract">
       <h2 id="abstract"><a href="#abstract" class="selfRef">Abstract</a></h2>
-<p id="section-abstract-1">This document proposes a custom protocol to implement Server/Client music Ssreaming<a href="#section-abstract-1" class="pilcrow">¶</a></p>
+<p id="section-abstract-1">This document proposes a custom protocol to implement Server/Client music Streaming<a href="#section-abstract-1" class="pilcrow">¶</a></p>
 </section>
 <div id="status-of-memo">
 <section id="section-boilerplate.1">
@@ -1303,7 +1303,7 @@ streaming server/client behavior that is outlined in hw6 of CIS553 (<a href="htt
 <ul class="normal">
 <li class="normal" id="section-3.1-1.1">When the client requests the list of songs the header to the packet sent to the server will be the encoded character "l". Similarly the packet header for stop is encoded character "s", and for quit the header is "q".<a href="#section-3.1-1.1" class="pilcrow">¶</a>
 </li>
-          <li class="normal" id="section-3.1-1.2">When the client requests a song the packet sent to the server the header will be "p" and then the song number, say "s", encoded as the header.<a href="#section-3.1-1.2" class="pilcrow">¶</a>
+          <li class="normal" id="section-3.1-1.2">When the client requests a song the packet sent to the server the header will be "p" and then two digits corresponding to the song number, say "s", encoded as the header.<a href="#section-3.1-1.2" class="pilcrow">¶</a>
 </li>
         </ul>
 </section>
