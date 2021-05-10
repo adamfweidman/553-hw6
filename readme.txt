@@ -5,6 +5,7 @@
 Group #15
 Authors: Micah Weitzman and Adam Weidman 
 
+NOTE: server running on 18.190.158.213:55353 
 
 TO USE
 
